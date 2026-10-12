@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
+import adminRoutes from "../routes/admin.routes.js";
 // Route & Controller imports
 import authRoutes from "../routes/auth.routes.js";
 import memoryRoutes from "../routes/memory.routes.js";
@@ -9,6 +9,7 @@ import { getCategories } from "../controllers/category.controller.js";
 
 // Middleware imports
 import { globalErrorHandler } from "../middlewares/error.middleware.js";
+import uploadRoutes from "../routes/upload.routes.js";
 
 const app = express();
 
@@ -27,6 +28,8 @@ app.use(cookieParser());
 // Register application API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/v1/memories", memoryRoutes);
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/uploads", uploadRoutes);
 
 // Register Categories Route
 app.get("/api/v1/categories", getCategories); 

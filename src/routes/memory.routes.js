@@ -9,9 +9,9 @@ import {
   getMyMemories,
 } from "../controllers/memory.controller.js";
 
-// Reaction controller import
+//  controller import
 import { toggleReaction } from "../controllers/reaction.controller.js"; 
-
+import { reportMemory } from "../controllers/report.controller.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
 import { createMemoryValidator } from "../validator/memory.validator.js";
 
@@ -37,5 +37,6 @@ router.delete("/:id", authenticate, deleteMemory);
 
 // Protected route — Toggle Reaction (I Remember This Too)
 router.put("/:id/reaction", authenticate, toggleReaction);
+router.post("/:id/reports", authenticate, reportMemory);
 
 export default router;
