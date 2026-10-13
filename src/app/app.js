@@ -25,6 +25,15 @@ app.use(
 app.use(express.json()); 
 app.use(cookieParser()); 
 
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Welcome to Zen Z Nostalgia Backend API! 🚀",
+    status: "Server is up and running successfully",
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Register application API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/v1/memories", memoryRoutes);
@@ -33,6 +42,7 @@ app.use("/api/v1/uploads", uploadRoutes);
 
 // Register Categories Route
 app.get("/api/v1/categories", getCategories); 
+
 // Global Error Handler (Must be placed after all routes)
 // Catches and formats any errors thrown in controllers
 app.use(globalErrorHandler);
