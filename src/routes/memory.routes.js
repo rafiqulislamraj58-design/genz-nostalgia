@@ -9,9 +9,10 @@ import {
   getMyMemories,
 } from "../controllers/memory.controller.js";
 
-//  controller import
+// Controller imports
 import { toggleReaction } from "../controllers/reaction.controller.js"; 
 import { reportMemory } from "../controllers/report.controller.js";
+import { addComment, getComments } from "../controllers/comment.controller.js"; // Comment controller imported
 import { authenticate } from "../middlewares/auth.middleware.js";
 import { createMemoryValidator } from "../validator/memory.validator.js";
 
@@ -37,6 +38,15 @@ router.delete("/:id", authenticate, deleteMemory);
 
 // Protected route — Toggle Reaction (I Remember This Too)
 router.put("/:id/reaction", authenticate, toggleReaction);
+
+// Protected route — Report a memory
 router.post("/:id/reports", authenticate, reportMemory);
+
+// === Comment Routes ===
+// Public route — Get all comments for a specific memory
+router.get("/:id/comments", getComments);
+
+// Protected route — Add a new comment to a specific memory
+router.post("/:id/comments", authenticate, addComment);
 
 export default router;
