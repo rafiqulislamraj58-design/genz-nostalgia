@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Memory from "../models/memory.model.js";
+import MemoryReaction from "../models/memory-reaction.model.js"; 
 import { asyncHandler } from "../utils/asyncHandler.js"; 
 
 // Escape special characters before using a search term in a regular expression
@@ -40,7 +41,7 @@ export const getMemories = asyncHandler(async (req, res) => {
   const requestedLimit = Number.parseInt(req.query.limit, 10) || 12;
   const limit = Math.min(50, Math.max(1, requestedLimit));
   
-  const skip = (page - 1) * limit; // ✅ Fixed
+  const skip = (page - 1) * limit; // ✅ Fixed skip calculation
   
   const filter = { status: "published" };
   const { search, category, year, location } = req.query;
@@ -101,7 +102,7 @@ export const getMyMemories = asyncHandler(async (req, res) => {
   const requestedLimit = Number.parseInt(req.query.limit, 10) || 12;
   const limit = Math.min(50, Math.max(1, requestedLimit));
   
-  const skip = (page - 1) * limit; // ✅ Fixed
+  const skip = (page - 1) * limit; // ✅ Fixed skip calculation
 
   const filter = { author: userId };
 
@@ -181,9 +182,19 @@ export const deleteMemory = asyncHandler(async (req, res) => {
   return res.status(200).json({ message: "Memory deleted successfully" });
 });
 
-// Get a single published memory by ID
 export const getMemoryById = asyncHandler(async (req, res) => {
   const { id } = req.params;
+
+  const authHeader = req.headers.authorization;
+  let userId = null;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    try {
+      const token = authHeader.split(" ")[1];
+      
+      userId = req.user?.userId || req.user?._id || req.user?.id;
+    } catch (e) {
+    }
+  }
 
   if (!mongoose.isValidObjectId(id)) {
     return res.status(400).json({ message: "Invalid memory ID" });
@@ -197,8 +208,20 @@ export const getMemoryById = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Memory not found or is restricted" });
   }
 
+  const reactionsCount = await MemoryReaction.countDocuments({ memory: id });
+
+  let reacted = false;
+  if (userId) {
+    const existingReaction = await MemoryReaction.findOne({ memory: id, user: userId });
+    reacted = !!existingReaction;
+  }
+
   return res.status(200).json({
     message: "Memory fetched successfully",
-    data: memory,
+    data: {
+      ...memory,
+      reactionsCount,
+      reacted,
+    },
   });
 });
