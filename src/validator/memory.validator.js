@@ -50,5 +50,23 @@ export const createMemoryValidator = [
     .isString().trim()
     .isLength({ max: 150 }).withMessage("Location max 150 characters"),
 
+  body("images")
+    .optional()
+    .isArray().withMessage("Images must be an array")
+    .custom((images) => {
+      if (images.length > 5) {
+        throw new Error("You can upload a maximum of 5 images per memory");
+      }
+      return true;
+    }),
+
+  body("images.*.url")
+    .optional()
+    .isURL().withMessage("Invalid image URL format"),
+
+  body("images.*.assetId")
+    .optional()
+    .isString().withMessage("Asset ID must be a string"),
+
   validateRequest
 ];

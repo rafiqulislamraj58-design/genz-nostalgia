@@ -15,7 +15,7 @@ export const createMemory = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: "Authentication required" });
   }
 
-  const { title, story, category, memoryYear, location, tags } = req.body;
+  const { title, story, category, memoryYear, location, tags, images } = req.body;
 
   const memory = await Memory.create({
     author: userId,
@@ -25,6 +25,7 @@ export const createMemory = asyncHandler(async (req, res) => {
     memoryYear,
     location,
     tags,
+    images: images || [],
   });
 
   return res.status(201).json({
@@ -39,7 +40,7 @@ export const getMemories = asyncHandler(async (req, res) => {
   const requestedLimit = Number.parseInt(req.query.limit, 10) || 12;
   const limit = Math.min(50, Math.max(1, requestedLimit));
   
-  const skip = (page - 1) * limit;
+  const skip = (page - 1) * limit; // ✅ Fixed
   
   const filter = { status: "published" };
   const { search, category, year, location } = req.query;
@@ -100,7 +101,7 @@ export const getMyMemories = asyncHandler(async (req, res) => {
   const requestedLimit = Number.parseInt(req.query.limit, 10) || 12;
   const limit = Math.min(50, Math.max(1, requestedLimit));
   
-  const skip = (page - 1) * limit;
+  const skip = (page - 1) * limit; // ✅ Fixed
 
   const filter = { author: userId };
 
@@ -129,7 +130,7 @@ export const updateMemory = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Invalid memory ID" });
   }
 
-  const allowedFields = ["title", "story", "category", "memoryYear", "location", "tags"];
+  const allowedFields = ["title", "story", "category", "memoryYear", "location", "tags", "images"];
   const updates = {};
 
   for (const field of allowedFields) {

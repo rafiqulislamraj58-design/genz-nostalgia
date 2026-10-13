@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const memorySchema = new mongoose.Schema(
@@ -47,12 +46,10 @@ const memorySchema = new mongoose.Schema(
           type: String,
           trim: true,
         },
-
         assetId: {
           type: String,
           trim: true,
         },
-
         altText: {
           type: String,
           trim: true,
