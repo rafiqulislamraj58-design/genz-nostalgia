@@ -13,10 +13,22 @@ import uploadRoutes from "../routes/upload.routes.js";
 
 const app = express();
 
-// Enable Cross-Origin Resource Sharing (CORS) for frontend
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://gen-z-frontend-five.vercel.app"
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173", 
+    origin: function (origin, callback) {
+      // Postman বা সার্ভার-টু-সার্ভার রিকোয়েস্টের জন্য origin undefined হতে পারে
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true 
   })
 );
@@ -44,7 +56,6 @@ app.use("/api/v1/uploads", uploadRoutes);
 app.get("/api/v1/categories", getCategories); 
 
 // Global Error Handler (Must be placed after all routes)
-// Catches and formats any errors thrown in controllers
 app.use(globalErrorHandler);
 
 export default app;
